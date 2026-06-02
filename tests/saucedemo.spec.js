@@ -57,8 +57,8 @@ expect(errorText).toContain(
 
 });
 
-// TC04 - Verify inventory count
-test('TC04 - Verify inventory count', async ({ page }) => {
+// TC04 - Verify inventory at least 4 products are listed 
+test('TC04 - Verify at least 4 products are listed ', async ({ page }) => {
 
 const inventoryPage = new InventoryPage(page);
 
@@ -115,8 +115,8 @@ expect(
 
 });
 
-// TC07 - Complete checkout flow
-test('TC07 - Complete checkout flow', async ({ page }) => {
+// TC07 - Full checkout flow
+test('TC07 - Full checkout flow', async ({ page }) => {
 
 const inventoryPage = new InventoryPage(page);
 const cartPage = new CartPage(page);
@@ -150,7 +150,8 @@ await expect(
 
 });
 
-// TC08 - Logout
+// TC08 - Verify after logout, user is redirected back to the login page
+
 test('TC08 - Logout', async ({ page }) => {
 
 const inventoryPage = new InventoryPage(page);
@@ -166,5 +167,67 @@ await expect(
     loginPage.loginBtn
 ).toBeVisible();
 
+
+});
+
+test.only('B1 - Verify products are sorted by Price Low to High', async ({ page }) => {
+
+const loginPage = new LoginPage(page);
+const inventoryPage = new InventoryPage(page);
+
+await loginPage.navigate();
+
+await loginPage.login(
+    data.standardUser.username,
+    data.standardUser.password
+);
+
+await inventoryPage.sortDropdown.selectOption('lohi');
+
+const prices = await inventoryPage.productPrices.allTextContents();
+
+const firstPrice = parseFloat(
+    prices[0].replace('$', '')
+);
+
+const lastPrice = parseFloat(
+    prices[prices.length - 1].replace('$', '')
+);
+
+expect(firstPrice).toBeLessThan(lastPrice);
+
+});
+
+test.only('B2 - Login as problem_user and observe application behavior', async ({ page }) => {
+
+const inventoryPage = new InventoryPage(page);
+
+await loginPage.login(
+    'problem_user',
+    'secret_sauce'
+);
+
+await inventoryPage.addBackpack();
+
+await expect(
+    inventoryPage.cartBadge
+).toHaveText('1');
+
+/*
+ OBSERVATION:
+
+ The "problem_user" account is intentionally configured by SauceDemo
+ to demonstrate application defects.
+
+ Common issues observed:
+ - Product images may not match the product names.
+ - Some UI elements may behave unexpectedly.
+ - Product information can be inconsistent.
+ - Cart functionality generally still works,
+   but visual defects are intentionally present.
+
+ This user is provided specifically for testing
+ how automation handles application bugs.
+*/
 
 });

@@ -6,7 +6,8 @@ class InventoryPage {
         this.products = page.locator('.inventory_item');
         this.cartBadge = page.locator('.shopping_cart_badge');
         this.cartLink = page.locator('.shopping_cart_link');
-
+        this.sortDropdown = page.locator('[data-test="product-sort-container"]');
+        this.productPrices = page.locator('.inventory_item_price');
         this.menuBtn = page.locator('#react-burger-menu-btn');
         this.logoutLink = page.locator('#logout_sidebar_link');
     }
